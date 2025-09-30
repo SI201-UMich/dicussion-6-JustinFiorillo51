@@ -147,8 +147,8 @@ class PollReader():
 
         avg = lambda lst: sum(lst) / len(lst) if lst else 0.0
 
-        h_change = avg(h_late) - avg(h_early)
-        t_change = avg(t_late) - avg(t_early)
+        h_change = avg(h_early) - avg(h_late)
+        t_change = avg(t_early) - avg(t_late)
         return (h_change, t_change)
 
 
