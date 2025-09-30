@@ -53,20 +53,33 @@ class PollReader():
         Remember that the first row of a CSV contains all of the column names,
         and each value in a CSV is seperated by a comma.
         """
-
+        lines = [ln.strip() for ln in self.raw_data if ln.strip()]
+        
         # iterate through each row of the data
-        for i in self.raw_data:
+        for row in lines[1:]:
 
             # split up the row by column
-            seperated = i.split(' ')
+            parts = [p.strip() for p in row.split(',')]
+            if len(parts) < 5:
+                continue
+
+            month_str = parts[0].lower()
+            date_int = int(parts[1])
+
+            sample_tokens = parts[2].split()
+            sample_count = int(sample_tokens[0])
+            sample_type = sample_tokens[1] if len(sample_tokens) > 1 else ""
+
+            harris = float(parts[3])
+            trump = float(parts[4])
 
             # map each part of the row to the correct column
-            self.data_dict['month'].append(seperated[0])
-            self.data_dict['date'].append(int(seperated[1]))
-            self.data_dict['sample'].append(int(seperated[2]))
-            self.data_dict['sample type'].append(seperated[2])
-            self.data_dict['Harris result'].append(float(seperated[3]))
-            self.data_dict['Trump result'].append(float(seperated[4]))
+            self.data_dict['month'].append(month_str)
+            self.data_dict['date'].append(date_int)
+            self.data_dict['sample'].append(sample_count)
+            self.data_dict['sample type'].append(sample_type)
+            self.data_dict['Harris result'].append(harris)
+            self.data_dict['Trump result'].append(trump)
 
 
     def highest_polling_candidate(self):
