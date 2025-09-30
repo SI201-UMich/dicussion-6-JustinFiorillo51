@@ -111,7 +111,17 @@ class PollReader():
             tuple: A tuple containing the average polling percentages for Harris and Trump
                    among likely voters, in that order.
         """
-        pass
+        h_vals = []
+        t_vals = []
+        for st, h, t in zip(self.data_dict['sample type'],
+                            self.data_dict['Harris result'],
+                            self.data_dict['Trump result']):
+            if st == 'LV':
+                h_vals.append(h)
+                t_vals.append(t)
+        h_avg = sum(h_vals) / len(h_vals) if h_vals else 0.0
+        t_avg = sum(t_vals) / len(t_vals) if t_vals else 0.0
+        return (h_avg, t_avg)
 
 
     def polling_history_change(self):
@@ -125,7 +135,21 @@ class PollReader():
             tuple: A tuple containing the net change for Harris and Trump, in that order.
                    Positive values indicate an increase, negative values indicate a decrease.
         """
-        pass
+        n = len(self.data_dict['Harris result'])
+        if n == 0:
+            return (0.0, 0.0)
+
+        k = min(30, n)
+        h_early = self.data_dict['Harris result'][:k]
+        t_early = self.data_dict['Trump result'][:k]
+        h_late = self.data_dict['Harris result'][-k:]
+        t_late = self.data_dict['Trump result'][-k:]
+
+        avg = lambda lst: sum(lst) / len(lst) if lst else 0.0
+
+        h_change = avg(h_late) - avg(h_early)
+        t_change = avg(t_late) - avg(t_early)
+        return (h_change, t_change)
 
 
 class TestPollReader(unittest.TestCase):
